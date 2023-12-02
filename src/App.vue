@@ -103,14 +103,14 @@ onMounted(() => {
 });
 
 const colors = [
-  { hex: '#ffffff' },
-  { hex: '#000000' },
-  { hex: '#ff0000' },
-  { hex: '#0000ff' },
-  { hex: '#ffd700' },
-  { hex: '#000080' },
-  { hex: '#008080' },
-  { hex: '#00ff00' },
+  { color: 'white', hex: '#ffffff' },
+  { color: 'black', hex: '#000000' },
+  { color: 'red', hex: '#ff0000' },
+  { color: 'blue', hex: '#0000ff' },
+  { color: 'gold', hex: '#ffd700' },
+  { color: 'navy', hex: '#000080' },
+  { color: 'teal', hex: '#008080' },
+  { color: 'lime', hex: '#00ff00' },
 ];
 
 const parts = ["inside", "outside_1", "outside_2", "outside_3", "laces", "sole_bottom", "sole_top"];
