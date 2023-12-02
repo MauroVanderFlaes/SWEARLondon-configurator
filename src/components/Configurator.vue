@@ -11,6 +11,8 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 //import orbit controls 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
+const props = defineProps(['color']);
+
 const draco = new DRACOLoader();
 draco.setDecoderConfig({ type: 'js' });
 draco.setDecoderPath('https://www.gstatic.com/draco/versioned/decoders/1.5.6/');
@@ -103,5 +105,6 @@ onMounted(() => {
 
 <template>
     <div>
+        {{ color }}
     </div>
 </template>

@@ -18,9 +18,12 @@ const parts = ["inside", "outside_1", "outside_2", "outside_3", "laces", "sole_b
 const selectedColor = ref(colors[0]); // Initialize with the first color
 const currentPartIndex = ref(0); // Initialize with the first part index
 
+const emit =  defineEmits(['colorChange']);
+
 const changeColor = (color) => {
     selectedColor.value = { ...color, part: parts[currentPartIndex.value] };
     console.log(selectedColor.value);
+    emit('update:colorChange', selectedColor.value);
     // Emit an event or call a method to notify the configurator component about the color change
 };
 
