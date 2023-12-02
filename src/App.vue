@@ -140,9 +140,9 @@ const changeColor = (color, part) => {
   <div class="fixed bottom-0 left-0 right-0 bg-stone-200 py-7">
     <!-- Previous and Next buttons -->
     <div class="flex justify-center">
-      <a href="#" @click="navigatePrev">prev</a>
+      <a href="#" @click="navigatePrev"><i class="fa-solid fa-arrow-left fa-xl relative top-3.5 right-5"></i></a>
       <h1 class="text-center text-[2em] font-bold pb-7">{{ parts[currentPartIndex] }}</h1>
-      <a href="#" @click="navigateNext">next</a>
+      <a href="#" @click="navigateNext"><i class="fa-solid fa-arrow-right fa-xl relative top-3.5 left-5"></i></a>
     </div>
 
     <!-- Color options -->
