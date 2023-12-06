@@ -12,6 +12,7 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 //import orbit controls 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
+
 const props = defineProps(['color']);
 
 const draco = new DRACOLoader();
@@ -30,6 +31,24 @@ const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
+//load cubeTextureLoader from /CubeMap
+const cubeTextureLoader = new THREE.CubeTextureLoader();
+const environmentMapTexture = cubeTextureLoader.load([
+  "/CubeMap/px.png",
+  "/CubeMap/nx.png",
+  "/CubeMap/py.png",
+  "/CubeMap/ny.png",
+  "/CubeMap/pz.png",
+  "/CubeMap/nz.png",
+]);
+
+//add environment map
+scene.background = environmentMapTexture;
+scene.environment = environmentMapTexture;
+
+
+
+
 //add orbit controls
 const controls = new OrbitControls(camera, renderer.domElement);
 
@@ -46,6 +65,8 @@ onMounted(() => {
   gltfLoader.load("/models/shoe.glb", (gltf) => {
     gltf.scene.position.set(0, 0, 0);
     gltf.scene.rotation.y = 1;
+    gltf.scene.rotation.x = 0;
+    gltf.scene.rotation.z = 0;
     gltf.scene.scale.set(6, 6, 6);
 
     let shoe = gltf.scene.children[0];
@@ -58,13 +79,13 @@ onMounted(() => {
           child.material.color.set("#ffffff");
         }
         if (child.name == "outside_1") {
-          child.material.color.set("#000000");
+          child.material.color.set("#00ff00");
         }
         if (child.name == "outside_2") {
-          child.material.color.set("#000000");
+          child.material.color.set("#00ff00");
         }
         if (child.name == "outside_3") {
-          child.material.color.set("#000000");
+          child.material.color.set("#00ff00");
         }
         if (child.name == "laces") {
           child.material.color.set("#000000");
@@ -83,10 +104,29 @@ onMounted(() => {
     scene.add(gltf.scene);
   });
 
-  camera.position.z = 2;
+
+// Vervolgens kun je de textuur toepassen op het materiaal van de cilinder
+
+  //table
+  const geometry = new THREE.CylinderGeometry(2, 1, 5, 32);
+  const material = new THREE.MeshStandardMaterial({
+    roughness: 0,
+    metalness: 0.5,
+    color: 0xAA00,
+    envMap: environmentMapTexture,
+  }); 
+  const octagon = new THREE.Mesh(geometry, material);
+  //table position
+  octagon.position.set(0, -3, 0);
+  octagon.material.side = THREE.DoubleSide;
+  scene.add(octagon);
+
+
+  camera.position.z = 3;
 
   //add ambient
-  const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 2);
+  ambientLight.position.set(0, 10, 0);
   scene.add(ambientLight);
 
   //add clock
@@ -95,6 +135,11 @@ onMounted(() => {
   function animate() {
     const elapsedTime = clock.getElapsedTime();
     requestAnimationFrame(animate);
+
+    //rotate shoe
+    scene.rotation.y = elapsedTime * 0.5;
+
+
 
     renderer.render(scene, camera);
   }
@@ -135,6 +180,7 @@ const changeColor = (color, part) => {
   });
 };
 </script>
+
 
 <template>
   <div class="fixed bottom-0 left-0 right-0 bg-stone-200 py-7">
