@@ -12,6 +12,8 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 //import orbit controls 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
+const loading = ref(true); // Initialize loading state as true
+
 const props = defineProps(['color']);
 
 const draco = new DRACOLoader();
@@ -134,6 +136,9 @@ onMounted(() => {
 
     // Add the loaded model to the scene
     scene.add(gltf.scene);
+
+    // Set loading to false when the model is loaded
+    loading.value = false;
   });
 
   //table
@@ -210,20 +215,30 @@ const changeColor = (color, part) => {
 </script>
 
 <template>
-  <div class="fixed bottom-0 left-0 right-0 bg-stone-200 py-7">
-    <!-- Previous and Next buttons -->
-    <div class="flex justify-center">
-      <a href="#" @click="navigatePrev"><i class="fa-solid fa-arrow-left fa-xl relative top-3.5 right-5"></i></a>
-      <h1 class="text-center text-[2em] font-bold pb-7">{{ parts[currentPartIndex] }}</h1>
-      <a href="#" @click="navigateNext"><i class="fa-solid fa-arrow-right fa-xl relative top-3.5 left-5"></i></a>
+  <div>
+    <!-- Preloader -->
+    <div v-if="loading"
+      class="preloader fixed top-0 left-0 w-full h-full flex justify-center items-center bg-opacity-75 bg-gray-800 text-white">
+      <!-- Add your preloader animation or message here -->
+      Loading...
     </div>
+    <div v-else>
+      <div class="fixed bottom-0 left-0 right-0 bg-stone-200 py-7">
+        <!-- Previous and Next buttons -->
+        <div class="flex justify-center">
+          <a href="#" @click="navigatePrev"><i class="fa-solid fa-arrow-left fa-xl relative top-3.5 right-5"></i></a>
+          <h1 class="text-center text-[2em] font-bold pb-7">{{ parts[currentPartIndex] }}</h1>
+          <a href="#" @click="navigateNext"><i class="fa-solid fa-arrow-right fa-xl relative top-3.5 left-5"></i></a>
+        </div>
 
-    <!-- Color options -->
-    <div class="flex justify-center gap-8 items-center flex-wrap">
-      <div v-for="color in colors" :key="color.color" class="text-center">
-        <div :style="{ backgroundColor: color.hex }" @click="changeColor(color.hex, parts[currentPartIndex])"
-          class="w-[42px] h-[42px] rounded-full mx-auto cursor-pointer"></div>
-        <h2 class="mt-2">{{ color.color }}</h2>
+        <!-- Color options -->
+        <div class="flex justify-center gap-8 items-center flex-wrap">
+          <div v-for="color in colors" :key="color.color" class="text-center">
+            <div :style="{ backgroundColor: color.hex }" @click="changeColor(color.hex, parts[currentPartIndex])"
+              class="w-[42px] h-[42px] rounded-full mx-auto cursor-pointer"></div>
+            <h2 class="mt-2">{{ color.color }}</h2>
+          </div>
+        </div>
       </div>
     </div>
   </div>
