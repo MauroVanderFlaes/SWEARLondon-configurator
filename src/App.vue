@@ -12,7 +12,6 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 //import orbit controls 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
-
 const props = defineProps(['color']);
 
 const draco = new DRACOLoader();
@@ -45,9 +44,6 @@ const environmentMapTexture = cubeTextureLoader.load([
 //add environment map
 scene.background = environmentMapTexture;
 scene.environment = environmentMapTexture;
-
-
-
 
 //add orbit controls
 const controls = new OrbitControls(camera, renderer.domElement);
@@ -104,9 +100,6 @@ onMounted(() => {
     scene.add(gltf.scene);
   });
 
-
-// Vervolgens kun je de textuur toepassen op het materiaal van de cilinder
-
   //table
   const geometry = new THREE.CylinderGeometry(2, 1, 5, 32);
   const material = new THREE.MeshStandardMaterial({
@@ -114,13 +107,12 @@ onMounted(() => {
     metalness: 0.5,
     color: 0xAA00,
     envMap: environmentMapTexture,
-  }); 
+  });
   const octagon = new THREE.Mesh(geometry, material);
   //table position
   octagon.position.set(0, -3, 0);
   octagon.material.side = THREE.DoubleSide;
   scene.add(octagon);
-
 
   camera.position.z = 3;
 
@@ -138,8 +130,6 @@ onMounted(() => {
 
     //rotate shoe
     scene.rotation.y = elapsedTime * 0.5;
-
-
 
     renderer.render(scene, camera);
   }
@@ -180,7 +170,6 @@ const changeColor = (color, part) => {
   });
 };
 </script>
-
 
 <template>
   <div class="fixed bottom-0 left-0 right-0 bg-stone-200 py-7">
