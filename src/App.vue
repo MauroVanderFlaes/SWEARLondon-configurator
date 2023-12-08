@@ -56,6 +56,10 @@ scene.environment = environmentMapTexture;
 //add orbit controls
 const controls = new OrbitControls(camera, renderer.domElement);
 
+controls.maxDistance = 10;
+controls.minDistance = 1;
+controls.maxPolarAngle = Math.PI / 2 - 0.1;
+
 //add GLTF model
 const gltfLoader = new GLTFLoader();
 gltfLoader.setDRACOLoader(draco); // Attach DRACOLoader to GLTFLoader
@@ -161,7 +165,9 @@ onMounted(() => {
     requestAnimationFrame(animate);
 
     //rotate shoe
-    // scene.rotation.y = elapsedTime * 0.5;
+    scene.rotation.y = elapsedTime * 0.5;
+
+    controls.update();
 
     renderer.render(scene, camera);
   }
