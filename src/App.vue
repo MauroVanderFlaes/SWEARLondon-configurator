@@ -32,6 +32,7 @@ document.body.appendChild(renderer.domElement);
 
 //load cubeTextureLoader from /CubeMap
 const cubeTextureLoader = new THREE.CubeTextureLoader();
+
 const environmentMapTexture = cubeTextureLoader.load([
   "/CubeMap/px.png",
   "/CubeMap/nx.png",
@@ -40,6 +41,13 @@ const environmentMapTexture = cubeTextureLoader.load([
   "/CubeMap/pz.png",
   "/CubeMap/nz.png",
 ]);
+
+const textureLoader = new THREE.TextureLoader();
+
+const colorMap = textureLoader.load('/textures/FabricLeatherCowhide001_COL_VAR1_2K.jpg');
+const normalMap = textureLoader.load('/textures/FabricLeatherCowhide001_NRM_2K.jpg');
+const bumpMap = textureLoader.load('/textures/FabricLeatherCowhide001_BUMP_2K.jpg');
+const glossMap = textureLoader.load('/textures/FabricLeatherCowhide001_GLOSS_2K.jpg');
 
 //add environment map
 scene.background = environmentMapTexture;
@@ -71,31 +79,55 @@ onMounted(() => {
     shoe.traverse((child) => {
       if (child.isMesh) {
         console.log(child.name);
+
+        let partMaterial; // Declare a variable to hold the material for each part
+
         if (child.name == "inside") {
-          child.material.color.set("#ffffff");
+          partMaterial = new THREE.MeshStandardMaterial({
+            color: "#ffffff",
+            map: colorMap,
+            normalMap: normalMap,
+            bumpMap: bumpMap,
+            roughnessMap: glossMap
+          });
         }
-        if (child.name == "outside_1") {
-          child.material.color.set("#00ff00");
-        }
-        if (child.name == "outside_2") {
-          child.material.color.set("#00ff00");
-        }
-        if (child.name == "outside_3") {
-          child.material.color.set("#00ff00");
+        if (child.name == "outside_1" || child.name == "outside_2" || child.name == "outside_3") {
+          partMaterial = new THREE.MeshStandardMaterial({
+            color: "#00ff00",
+            map: colorMap,
+            normalMap: normalMap,
+            bumpMap: bumpMap,
+            roughnessMap: glossMap
+          });
         }
         if (child.name == "laces") {
-          child.material.color.set("#000000");
+          partMaterial = new THREE.MeshStandardMaterial({
+            color: "#000000",
+            map: colorMap,
+            normalMap: normalMap,
+            bumpMap: bumpMap,
+            roughnessMap: glossMap
+          });
         }
-        if (child.name == "sole_bottom") {
-          child.material.color.set("#ffffff");
+        if (child.name == "sole_bottom" || child.name == "sole_top") {
+          partMaterial = new THREE.MeshStandardMaterial({
+            color: "#ffffff",
+            map: colorMap,
+            normalMap: normalMap,
+            bumpMap: bumpMap,
+            roughnessMap: glossMap
+          });
         }
-        if (child.name == "sole_top") {
-          child.material.color.set("#ffffff");
-        }
+
         // Set up casting shadows for meshes
         child.castShadow = true;
+
+        // Apply the specific material for each part
+        child.material = partMaterial || shoeMaterial; // Use shoeMaterial as a fallback
       }
     });
+
+
     // Add the loaded model to the scene
     scene.add(gltf.scene);
   });
@@ -117,7 +149,7 @@ onMounted(() => {
   camera.position.z = 3;
 
   //add ambient
-  const ambientLight = new THREE.AmbientLight(0xffffff, 2);
+  const ambientLight = new THREE.AmbientLight(0xffffff, 10);
   ambientLight.position.set(0, 10, 0);
   scene.add(ambientLight);
 
@@ -129,7 +161,7 @@ onMounted(() => {
     requestAnimationFrame(animate);
 
     //rotate shoe
-    scene.rotation.y = elapsedTime * 0.5;
+    // scene.rotation.y = elapsedTime * 0.5;
 
     renderer.render(scene, camera);
   }
