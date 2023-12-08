@@ -142,7 +142,7 @@ onMounted(() => {
   });
 
   //table
-  const geometry = new THREE.CylinderGeometry(2, 1, 5, 32);
+  const geometry = new THREE.CylinderGeometry(2, 1, 5, 128);
   const material = new THREE.MeshStandardMaterial({
     roughness: 0,
     metalness: 0.5,
