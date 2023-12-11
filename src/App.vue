@@ -12,6 +12,8 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 //import orbit controls 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
+import OrderButton from './components/OrderButton.vue';
+
 const loading = ref(true); // Initialize loading state as true
 
 const props = defineProps(['color']);
@@ -194,6 +196,39 @@ const colors = [
 
 const parts = ["inside", "outside_1", "outside_2", "outside_3", "laces", "sole_bottom", "sole_top"];
 
+const customizations = {
+  inside: {
+    color: "white",
+    material: "leather",
+  },
+  outside_1: {
+    color: "white",
+    material: "leather",
+  },
+  outside_2: {
+    color: "white",
+    material: "leather",
+  },
+  outside_3: {
+    color: "white",
+    material: "leather",
+  },
+  laces: {
+    color: "white",
+    material: "leather",
+  },
+  sole_bottom: {
+    color: "white",
+    material: "leather",
+  },
+  sole_top: {
+    color: "white",
+    material: "leather",
+  }
+};
+
+console.log(customizations.laces.color);
+
 const selectedColor = ref(colors[0]); // Initialize with the first color
 const currentPartIndex = ref(0); // Initialize with the first part index
 
@@ -205,11 +240,11 @@ const navigateNext = () => {
   currentPartIndex.value = (currentPartIndex.value + 1) % parts.length;
 };
 
-const changeColor = (color, part) => {
+const changeColor = (colorName, colorHex, part) => {
   scene.traverse((child) => {
-    console.log(child.name, color, part);
     if (child.isMesh && child.name === part) {
-      child.material.color.setStyle(color);
+      child.material.color.setStyle(colorHex);
+      customizations[part].color = colorName;
     }
   });
 };
@@ -222,7 +257,8 @@ const changeColor = (color, part) => {
       class="preloader fixed w-full h-full flex justify-center items-center flex-col bg-black text-white">
       <!-- Add your preloader animation or message here -->
       <img src="/images/logo.png" alt="" class="mt-10 mb-5">
-      <img src="/images/preloader.jpg" alt="Loading..." class="h-85 bg-gradient-to-b from-transparent to-black opacity-60 rounded-full"/>
+      <img src="/images/preloader.jpg" alt="Loading..."
+        class="h-85 bg-gradient-to-b from-transparent to-black opacity-60 rounded-full" />
       <p class="absolute bottom-20">RUNNING TO THE SHOE LAB...</p>
     </div>
     <div v-else>
@@ -237,11 +273,12 @@ const changeColor = (color, part) => {
         <!-- Color options -->
         <div class="flex justify-center gap-8 items-center flex-wrap">
           <div v-for="color in colors" :key="color.color" class="text-center">
-            <div :style="{ backgroundColor: color.hex }" @click="changeColor(color.hex, parts[currentPartIndex])"
+            <div :style="{ backgroundColor: color.hex }" @click="changeColor(color.color, color.hex, parts[currentPartIndex])"
               class="w-[42px] h-[42px] rounded-full mx-auto cursor-pointer"></div>
             <h2 class="mt-2">{{ color.color }}</h2>
           </div>
         </div>
+        <OrderButton :customizations="customizations" />
       </div>
     </div>
   </div>
