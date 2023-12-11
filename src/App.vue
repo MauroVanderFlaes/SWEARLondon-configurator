@@ -68,7 +68,11 @@ controls.maxPolarAngle = Math.PI / 2 - 0.1;
 const gltfLoader = new GLTFLoader();
 gltfLoader.setDRACOLoader(draco); // Attach DRACOLoader to GLTFLoader
 
+let socket = null;
+
 onMounted(() => {
+  // connect websocket
+  socket = new WebSocket('ws://localhost:3000/primus');
   // Initialize the renderer and add it to the DOM
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.querySelector("#app").appendChild(renderer.domElement);
@@ -273,12 +277,13 @@ const changeColor = (colorName, colorHex, part) => {
         <!-- Color options -->
         <div class="flex justify-center gap-8 items-center flex-wrap">
           <div v-for="color in colors" :key="color.color" class="text-center">
-            <div :style="{ backgroundColor: color.hex }" @click="changeColor(color.color, color.hex, parts[currentPartIndex])"
+            <div :style="{ backgroundColor: color.hex }"
+              @click="changeColor(color.color, color.hex, parts[currentPartIndex])"
               class="w-[42px] h-[42px] rounded-full mx-auto cursor-pointer"></div>
             <h2 class="mt-2">{{ color.color }}</h2>
           </div>
         </div>
-        <OrderButton :customizations="customizations" />
+        <OrderButton :customizations="customizations" :socket="socket" />
       </div>
     </div>
   </div>

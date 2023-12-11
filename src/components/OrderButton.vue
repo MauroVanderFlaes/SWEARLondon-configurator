@@ -1,9 +1,11 @@
 <script setup>
 import { ref } from "vue";
 
-const props = defineProps(['customizations']);
+const props = defineProps(['customizations', 'socket']);
 
 const customizations = ref(props.customizations);
+
+const socket  = ref(props.socket);
 
 let username = "John Doe";
 let user_mail = "example@outlook.com";
@@ -11,6 +13,7 @@ let user_mail = "example@outlook.com";
 const placeOrder = async () => {
     try {
         let order = {
+            action: "newOrder",
             laces_color: customizations.value.laces.color,
             inside_color: customizations.value.inside.color,
             outside_1_color: customizations.value.outside_1.color,
@@ -29,7 +32,7 @@ const placeOrder = async () => {
             user_mail: user_mail,
         };
 
-        console.log("Order:", order);
+        socket.value.send(JSON.stringify(order));
 
         const response = await fetch("http://localhost:3000/api/v1/shoes/", {
             method: "POST",
