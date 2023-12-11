@@ -83,6 +83,6 @@ const placeOrder = async () => {
 
 <template>
     <div class="flex justify-center mt-7">
-        <a @click="placeOrder" href="#" class="bg-[#69FF47] text-white px-[75px] py-2 rounded font-bold">Order</a>
+        <a @click="placeOrder" href="#" class="absolute top-5 right-10  bg-[#69FF24] text-black px-[75px] py-2 rounded font-bold">Order</a>
     </div>
 </template>
