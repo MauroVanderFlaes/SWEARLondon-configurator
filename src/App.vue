@@ -155,7 +155,8 @@ onMounted(() => {
   octagon.material.side = THREE.DoubleSide;
   scene.add(octagon);
 
-  camera.position.z = 3;
+  camera.position.z = 2.5;
+  camera.position.y = 0.5;
 
   //add ambient
   const ambientLight = new THREE.AmbientLight(0xffffff, 10);
@@ -218,9 +219,11 @@ const changeColor = (color, part) => {
   <div>
     <!-- Preloader -->
     <div v-if="loading"
-      class="preloader fixed top-0 left-0 w-full h-full flex justify-center items-center bg-opacity-75 bg-gray-800 text-white">
+      class="preloader fixed w-full h-full flex justify-center items-center flex-col bg-black text-white">
       <!-- Add your preloader animation or message here -->
-      Loading...
+      <img src="/images/logo.png" alt="" class="mt-10 mb-5">
+      <img src="/images/preloader.jpg" alt="Loading..." class="h-85 bg-gradient-to-b from-transparent to-black opacity-60 rounded-full"/>
+      <p class="absolute bottom-20">RUNNING TO THE SHOE LAB...</p>
     </div>
     <div v-else>
       <div class="fixed bottom-0 left-0 right-0 bg-stone-200 py-7">
