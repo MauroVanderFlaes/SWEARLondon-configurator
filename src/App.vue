@@ -61,6 +61,20 @@ const rubberGlossMap = textureLoader.load('/textures/Rubber/Rubber_Sole_002_roug
 const rubberColorMap = textureLoader.load('/textures/Rubber/Rubber_Sole_002_basecolor.jpg');
 const rubberAmbientOcclusionMap = textureLoader.load('/textures/Rubber/Rubber_Sole_002_ambientOcclusion.jpg');
 
+//Organic texture
+const organicNormalMap = textureLoader.load('/textures/Organic/Abstract_Organic_006_normal.jpg');
+const organicBumpMap = textureLoader.load('/textures/Organic/Abstract_Organic_006_height.png');
+const organicGlossMap = textureLoader.load('/textures/Organic/Abstract_Organic_006_roughness.jpg');
+const organicColorMap = textureLoader.load('/textures/Organic/Abstract_Organic_006_basecolor.jpg');
+const organicAmbientOcclusionMap = textureLoader.load('/textures/Organic/Abstract_Organic_006_ambientOcclusion.jpg');
+
+//Lava texture
+const lavaNormalMap = textureLoader.load('/textures/Lava/Lava_005_NORM.jpg');
+const lavaBumpMap = textureLoader.load('/textures/Lava/Lava_005_DISP.png');
+const lavaGlossMap = textureLoader.load('/textures/Lava/Lava_005_ROUGH.jpg');
+const lavaColorMap = textureLoader.load('/textures/Lava/Lava_005_COLOR.jpg');
+const lavaAmbientOcclusionMap = textureLoader.load('/textures/Lava/Lava_005_OCC.jpg');
+
 //add environment map
 scene.background = environmentMapTexture;
 scene.environment = environmentMapTexture;
@@ -79,8 +93,10 @@ gltfLoader.setDRACOLoader(draco); // Attach DRACOLoader to GLTFLoader
 let socket = null;
 
 const textures = [
-  { name: 'leather', displayName: 'Leather', preview: '/textures/leather_preview.jpg' },
-  { name: 'rubber', displayName: 'Rubber', preview: '/textures/rubber_preview.jpg' },
+  { name: 'leather', displayName: 'Leather', preview: '/textures/Leather/leather_preview.jpg' },
+  { name: 'rubber', displayName: 'Rubber', preview: '/textures/Rubber/rubber_preview.jpg' },
+  { name: 'organic', displayName: 'Organic', preview: '/textures/Organic/organic_preview.jpg' },
+  { name: 'lava', displayName: 'Lava', preview: '/textures/Lava/lava_preview.jpg' },
   // Add more textures as needed
 ];
 
@@ -109,6 +125,10 @@ const getTexturePath = (textureName) => {
       return '/textures/Leather/FabricLeatherCowhide001_COL_VAR1_2K.jpg';
     case 'rubber':
       return '/textures/Rubber/Rubber_Sole_002_basecolor.jpg';
+    case 'organic':
+      return '/textures/Organic/Abstract_Organic_006_basecolor.jpg';
+    case 'lava':
+      return '/textures/Lava/Lava_005_COLOR.jpg';
     // Voeg meer cases toe indien nodig
     default:
       return '';
@@ -236,14 +256,14 @@ onMounted(() => {
 });
 
 const colors = [
-  { color: 'white', hex: '#ffffff' },
-  { color: 'black', hex: '#000000' },
-  { color: 'red', hex: '#ff0000' },
-  { color: 'blue', hex: '#0000ff' },
-  { color: 'gold', hex: '#ffd700' },
-  { color: 'navy', hex: '#000080' },
-  { color: 'teal', hex: '#008080' },
-  { color: 'lime', hex: '#00ff00' },
+  { color: 'White', hex: '#ffffff' },
+  { color: 'Black', hex: '#000000' },
+  { color: 'Red', hex: '#ff0000' },
+  { color: 'Blue', hex: '#0000ff' },
+  { color: 'Gold', hex: '#ffd700' },
+  { color: 'Navy', hex: '#000080' },
+  { color: 'Teal', hex: '#008080' },
+  { color: 'Lime', hex: '#00ff00' },
 ];
 
 const parts = [
@@ -330,6 +350,20 @@ const updateMaterialTextures = (material, textureMap, part) => {
         material.map = textureMap;
         material.ambientOcclusionMap = textureLoader.load('/textures/Rubber/Rubber_Sole_002_ambientOcclusion.jpg');
       }
+      else if (state.selectedTexture === 'organic') {
+        material.normalMap = textureLoader.load('/textures/Organic/Abstract_Organic_006_normal.jpg');
+        material.bumpMap = textureLoader.load('/textures/Organic/Abstract_Organic_006_height.png');
+        material.roughnessMap = textureLoader.load('/textures/Organic/Abstract_Organic_006_roughness.jpg');
+        material.map = textureMap;
+        material.ambientOcclusionMap = textureLoader.load('/textures/Organic/Abstract_Organic_006_ambientOcclusion.jpg');
+      }
+      else if (state.selectedTexture === 'lava') {
+        material.normalMap = textureLoader.load('/textures/Lava/Lava_005_NORM.jpg');
+        material.bumpMap = textureLoader.load('/textures/Lava/Lava_005_DISP.png');
+        material.roughnessMap = textureLoader.load('/textures/Lava/Lava_005_ROUGH.jpg');
+        material.map = textureMap;
+        material.ambientOcclusionMap = textureLoader.load('/textures/Lava/Lava_005_OCC.jpg');
+      }
       break;
     // Voeg meer cases toe voor andere onderdelen indien nodig
   }
@@ -348,7 +382,7 @@ const updateMaterialTextures = (material, textureMap, part) => {
       <p class="absolute bottom-20">RUNNING TO THE SHOE LAB...</p>
     </div>
     <div v-else>
-      <div class="fixed bottom-0 left-0 right-0 bg-stone-200 py-7">
+      <div class="fixed bottom-0 left-0 right-0 bg-stone-200 py-4">
         <!-- Previous and Next buttons -->
         <div class="flex justify-center">
           <a href="#" @click="navigatePrev"><i class="fa-solid fa-arrow-left fa-xl relative top-3.5 right-5"></i></a>
@@ -366,17 +400,17 @@ const updateMaterialTextures = (material, textureMap, part) => {
           </div>
         </div>
         <!-- Texture options -->
-        <div class="flex justify-center gap-8 items-center flex-wrap">
-          <div v-for="texture in textures" :key="texture.name" class="text-center">
-            <div @click="changeTexture(texture.name, parts[currentPartIndex].name)"
-              class="w-[42px] h-[42px] mx-auto cursor-pointer">
-              <!-- Display texture preview or icon here -->
-              <img :src="texture.preview" alt="Texture Preview" class="w-full h-full rounded-full">
-            </div>
-            <h2 class="mt-2">{{ texture.displayName }}</h2>
-          </div>
-        </div>
-        <OrderButton :customizations="customizations" :socket="socket" />
+<div class="flex justify-center gap-8 items-center flex-wrap mt-5">
+  <div v-for="texture in textures" :key="texture.name" class="text-center">
+    <div @click="changeTexture(texture.name, parts[currentPartIndex].name)" class="w-[42px] h-[42px] mx-auto cursor-pointer">
+      <!-- Display texture preview or icon here -->
+      <img :src="texture.preview" alt="Texture Preview" class="w-full h-full rounded-full">
+    </div>
+    <h2 class="mt-2">{{ texture.displayName }}</h2>
+  </div>
+  <OrderButton :customizations="customizations" :socket="socket" />
+</div>
+
       </div>
     </div>
   </div>
