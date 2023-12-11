@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, reactive } from 'vue';
 
 import * as THREE from "three";
 
@@ -46,10 +46,18 @@ const environmentMapTexture = cubeTextureLoader.load([
 
 const textureLoader = new THREE.TextureLoader();
 
-const colorMap = textureLoader.load('/textures/FabricLeatherCowhide001_COL_VAR1_2K.jpg');
-const normalMap = textureLoader.load('/textures/FabricLeatherCowhide001_NRM_2K.jpg');
-const bumpMap = textureLoader.load('/textures/FabricLeatherCowhide001_BUMP_2K.jpg');
-const glossMap = textureLoader.load('/textures/FabricLeatherCowhide001_GLOSS_2K.jpg');
+//leather texture
+const colorMap = textureLoader.load('/textures/Leather/FabricLeatherCowhide001_COL_VAR1_2K.jpg');
+const normalMap = textureLoader.load('/textures/Leather/FabricLeatherCowhide001_NRM_2K.jpg');
+const bumpMap = textureLoader.load('/textures/Leather/FabricLeatherCowhide001_BUMP_2K.jpg');
+const glossMap = textureLoader.load('/textures/Leather/FabricLeatherCowhide001_GLOSS_2K.jpg');
+
+//rubber texture
+const rubberNormalMap = textureLoader.load('/textures/Rubber/Rubber_Sole_002_normal.jpg');
+const rubberBumpMap = textureLoader.load('/textures/Rubber/Rubber_Sole_002_height.png');
+const rubberGlossMap = textureLoader.load('/textures/Rubber/Rubber_Sole_002_roughness.jpg');
+const rubberColorMap = textureLoader.load('/textures/Rubber/Rubber_Sole_002_basecolor.jpg');
+const rubberAmbientOcclusionMap = textureLoader.load('/textures/Rubber/Rubber_Sole_002_ambientOcclusion.jpg');
 
 //add environment map
 scene.background = environmentMapTexture;
@@ -65,6 +73,44 @@ controls.maxPolarAngle = Math.PI / 2 - 0.1;
 //add GLTF model
 const gltfLoader = new GLTFLoader();
 gltfLoader.setDRACOLoader(draco); // Attach DRACOLoader to GLTFLoader
+
+const textures = [
+  { name: 'leather', displayName: 'Leather', preview: '/textures/leather_preview.jpg' },
+  { name: 'rubber', displayName: 'Rubber', preview: '/textures/rubber_preview.jpg' },
+  // Add more textures as needed
+];
+
+const state = reactive({
+  selectedTexture: 'leather', // Standaard geselecteerde textuur
+});
+
+
+const changeTexture = (texture, part) => {
+  const texturePath = getTexturePath(texture);
+
+
+  scene.traverse((child) => {
+  if (child.isMesh && child.name === part) {
+    const textureMap = new THREE.TextureLoader().load(texturePath, (loadedTexture) => {
+      updateMaterialTextures(child.material, loadedTexture, part);
+    }); // Add the closing parenthesis and semicolon here
+  }
+});
+
+  state.selectedTexture = texture;
+};
+
+const getTexturePath = (textureName) => {
+  switch (textureName) {
+    case 'leather':
+      return '/textures/Leather/FabricLeatherCowhide001_COL_VAR1_2K.jpg';
+    case 'rubber':
+      return '/textures/Rubber/Rubber_Sole_002_basecolor.jpg';
+    // Voeg meer cases toe indien nodig
+    default:
+      return '';
+  }
+};
 
 onMounted(() => {
   // Initialize the renderer and add it to the DOM
@@ -116,12 +162,18 @@ onMounted(() => {
           });
         }
         if (child.name == "sole_bottom" || child.name == "sole_top") {
+
+
+
           partMaterial = new THREE.MeshStandardMaterial({
             color: "#ffffff",
+
+            //Leather texture
             map: colorMap,
             normalMap: normalMap,
             bumpMap: bumpMap,
-            roughnessMap: glossMap
+            roughnessMap: glossMap,
+
           });
         }
 
@@ -192,7 +244,15 @@ const colors = [
   { color: 'lime', hex: '#00ff00' },
 ];
 
-const parts = ["inside", "outside_1", "outside_2", "outside_3", "laces", "sole_bottom", "sole_top"];
+const parts = [
+  { name: "inside", display: "Inside Lining" },
+  { name: "outside_1", display: "Frontstrays" },
+  { name: "outside_2", display: "Midstrays" },
+  { name: "outside_3", display: "Backstrays" },
+  { name: "laces", display: "Laces" },
+  { name: "sole_bottom", display: "Outsole" },
+  { name: "sole_top", display: "Midsole" }
+];
 
 const selectedColor = ref(colors[0]); // Initialize with the first color
 const currentPartIndex = ref(0); // Initialize with the first part index
@@ -205,6 +265,7 @@ const navigateNext = () => {
   currentPartIndex.value = (currentPartIndex.value + 1) % parts.length;
 };
 
+
 const changeColor = (color, part) => {
   scene.traverse((child) => {
     console.log(child.name, color, part);
@@ -213,6 +274,36 @@ const changeColor = (color, part) => {
     }
   });
 };
+
+
+
+const updateMaterialTextures = (material, textureMap, part) => {
+  switch (part) {
+    case 'inside':
+    case 'outside_1':
+    case 'outside_2':
+    case 'outside_3':
+    case 'laces':
+    case 'sole_bottom':
+    case 'sole_top':
+      if (state.selectedTexture === 'leather') {
+        material.map = textureMap;
+        material.normalMap = textureLoader.load('/textures/Leather/FabricLeatherCowhide001_NRM_2K.jpg');
+        material.bumpMap = textureLoader.load('/textures/Leather/FabricLeatherCowhide001_BUMP_2K.jpg');
+        material.roughnessMap = textureLoader.load('/textures/Leather/FabricLeatherCowhide001_GLOSS_2K.jpg');
+      } else if (state.selectedTexture === 'rubber') {
+        material.normalMap = textureLoader.load('/textures/Rubber/Rubber_Sole_002_normal.jpg');
+        material.bumpMap = textureLoader.load('/textures/Rubber/Rubber_Sole_002_height.png');
+        material.roughnessMap = textureLoader.load('/textures/Rubber/Rubber_Sole_002_roughness.jpg');
+        material.map = textureMap;
+        material.ambientOcclusionMap = textureLoader.load('/textures/Rubber/Rubber_Sole_002_ambientOcclusion.jpg');
+      }
+      break;
+    // Voeg meer cases toe voor andere onderdelen indien nodig
+  }
+};
+
+
 </script>
 
 <template>
@@ -230,18 +321,32 @@ const changeColor = (color, part) => {
         <!-- Previous and Next buttons -->
         <div class="flex justify-center">
           <a href="#" @click="navigatePrev"><i class="fa-solid fa-arrow-left fa-xl relative top-3.5 right-5"></i></a>
-          <h1 class="text-center text-[2em] font-bold pb-7">{{ parts[currentPartIndex] }}</h1>
+          <h1 class="text-center text-[2em] font-bold pb-7">{{ parts[currentPartIndex].display }}</h1>
           <a href="#" @click="navigateNext"><i class="fa-solid fa-arrow-right fa-xl relative top-3.5 left-5"></i></a>
         </div>
 
         <!-- Color options -->
         <div class="flex justify-center gap-8 items-center flex-wrap">
           <div v-for="color in colors" :key="color.color" class="text-center">
-            <div :style="{ backgroundColor: color.hex }" @click="changeColor(color.hex, parts[currentPartIndex])"
+            <div :style="{ backgroundColor: color.hex }" @click="changeColor(color.hex, parts[currentPartIndex].name)"
               class="w-[42px] h-[42px] rounded-full mx-auto cursor-pointer"></div>
             <h2 class="mt-2">{{ color.color }}</h2>
           </div>
         </div>
+
+        <!-- Texture options -->
+<div class="flex justify-center gap-8 items-center flex-wrap">
+  <div v-for="texture in textures" :key="texture.name" class="text-center">
+    <div @click="changeTexture(texture.name, parts[currentPartIndex].name)" class="w-[42px] h-[42px] mx-auto cursor-pointer">
+      <!-- Display texture preview or icon here -->
+      <img :src="texture.preview" alt="Texture Preview" class="w-full h-full rounded-full">
+    </div>
+    <h2 class="mt-2">{{ texture.displayName }}</h2>
+  </div>
+</div>
+
+
+
       </div>
     </div>
   </div>
