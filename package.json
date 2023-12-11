@@ -9,8 +9,10 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "primus": "^8.0.9",
     "three": "^0.159.0",
-    "vue": "^3.3.8"
+    "vue": "^3.3.8",
+    "ws": "^8.15.0"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^4.5.0",
