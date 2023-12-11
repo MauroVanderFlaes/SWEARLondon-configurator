@@ -46,10 +46,18 @@ const environmentMapTexture = cubeTextureLoader.load([
 
 const textureLoader = new THREE.TextureLoader();
 
-const colorMap = textureLoader.load('/textures/FabricLeatherCowhide001_COL_VAR1_2K.jpg');
-const normalMap = textureLoader.load('/textures/FabricLeatherCowhide001_NRM_2K.jpg');
-const bumpMap = textureLoader.load('/textures/FabricLeatherCowhide001_BUMP_2K.jpg');
-const glossMap = textureLoader.load('/textures/FabricLeatherCowhide001_GLOSS_2K.jpg');
+//leather texture
+const colorMap = textureLoader.load('/textures/Leather/FabricLeatherCowhide001_COL_VAR1_2K.jpg');
+const normalMap = textureLoader.load('/textures/Leather/FabricLeatherCowhide001_NRM_2K.jpg');
+const bumpMap = textureLoader.load('/textures/Leather/FabricLeatherCowhide001_BUMP_2K.jpg');
+const glossMap = textureLoader.load('/textures/Leather/FabricLeatherCowhide001_GLOSS_2K.jpg');
+
+//rubber texture
+const rubberNormalMap = textureLoader.load('/textures/Rubber/Rubber_Sole_002_normal.jpg');
+const rubberBumpMap = textureLoader.load('/textures/Rubber/Rubber_Sole_002_height.png');
+const rubberGlossMap = textureLoader.load('/textures/Rubber/Rubber_Sole_002_roughness.jpg');
+const rubberColorMap = textureLoader.load('/textures/Rubber/Rubber_Sole_002_basecolor.jpg');
+const rubberAmbientOcclusionMap = textureLoader.load('/textures/Rubber/Rubber_Sole_002_ambientOcclusion.jpg');
 
 //add environment map
 scene.background = environmentMapTexture;
@@ -121,7 +129,14 @@ onMounted(() => {
             map: colorMap,
             normalMap: normalMap,
             bumpMap: bumpMap,
-            roughnessMap: glossMap
+            roughnessMap: glossMap,
+
+            normalMap: rubberNormalMap,
+            bumpMap: rubberBumpMap,
+            roughnessMap: rubberGlossMap,
+            map: rubberColorMap,
+            ambientOcclusionMap: rubberAmbientOcclusionMap
+
           });
         }
 
