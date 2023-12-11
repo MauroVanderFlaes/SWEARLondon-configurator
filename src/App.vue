@@ -12,6 +12,8 @@ import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader.js";
 //import orbit controls 
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 
+import OrderButton from './components/OrderButton.vue';
+
 const loading = ref(true); // Initialize loading state as true
 
 const props = defineProps(['color']);
@@ -74,6 +76,8 @@ controls.maxPolarAngle = Math.PI / 2 - 0.1;
 const gltfLoader = new GLTFLoader();
 gltfLoader.setDRACOLoader(draco); // Attach DRACOLoader to GLTFLoader
 
+let socket = null;
+
 const textures = [
   { name: 'leather', displayName: 'Leather', preview: '/textures/leather_preview.jpg' },
   { name: 'rubber', displayName: 'Rubber', preview: '/textures/rubber_preview.jpg' },
@@ -84,18 +88,17 @@ const state = reactive({
   selectedTexture: 'leather', // Standaard geselecteerde textuur
 });
 
-
 const changeTexture = (texture, part) => {
   const texturePath = getTexturePath(texture);
 
 
   scene.traverse((child) => {
-  if (child.isMesh && child.name === part) {
-    const textureMap = new THREE.TextureLoader().load(texturePath, (loadedTexture) => {
-      updateMaterialTextures(child.material, loadedTexture, part);
-    }); // Add the closing parenthesis and semicolon here
-  }
-});
+    if (child.isMesh && child.name === part) {
+      const textureMap = new THREE.TextureLoader().load(texturePath, (loadedTexture) => {
+        updateMaterialTextures(child.material, loadedTexture, part);
+      }); // Add the closing parenthesis and semicolon here
+    }
+  });
 
   state.selectedTexture = texture;
 };
@@ -113,6 +116,8 @@ const getTexturePath = (textureName) => {
 };
 
 onMounted(() => {
+  // connect websocket
+  socket = new WebSocket('ws://localhost:3000/primus');
   // Initialize the renderer and add it to the DOM
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.querySelector("#app").appendChild(renderer.domElement);
@@ -163,8 +168,6 @@ onMounted(() => {
         }
         if (child.name == "sole_bottom" || child.name == "sole_top") {
 
-
-
           partMaterial = new THREE.MeshStandardMaterial({
             color: "#ffffff",
 
@@ -184,7 +187,6 @@ onMounted(() => {
         child.material = partMaterial || shoeMaterial; // Use shoeMaterial as a fallback
       }
     });
-
 
     // Add the loaded model to the scene
     scene.add(gltf.scene);
@@ -254,6 +256,39 @@ const parts = [
   { name: "sole_top", display: "Midsole" }
 ];
 
+const customizations = {
+  inside: {
+    color: "white",
+    material: "leather",
+  },
+  outside_1: {
+    color: "white",
+    material: "leather",
+  },
+  outside_2: {
+    color: "white",
+    material: "leather",
+  },
+  outside_3: {
+    color: "white",
+    material: "leather",
+  },
+  laces: {
+    color: "white",
+    material: "leather",
+  },
+  sole_bottom: {
+    color: "white",
+    material: "leather",
+  },
+  sole_top: {
+    color: "white",
+    material: "leather",
+  }
+};
+
+console.log(customizations.laces.color);
+
 const selectedColor = ref(colors[0]); // Initialize with the first color
 const currentPartIndex = ref(0); // Initialize with the first part index
 
@@ -265,17 +300,14 @@ const navigateNext = () => {
   currentPartIndex.value = (currentPartIndex.value + 1) % parts.length;
 };
 
-
-const changeColor = (color, part) => {
+const changeColor = (colorName, colorHex, part) => {
   scene.traverse((child) => {
-    console.log(child.name, color, part);
     if (child.isMesh && child.name === part) {
-      child.material.color.setStyle(color);
+      child.material.color.setStyle(colorHex);
+      customizations[part].color = colorName;
     }
   });
 };
-
-
 
 const updateMaterialTextures = (material, textureMap, part) => {
   switch (part) {
@@ -302,8 +334,6 @@ const updateMaterialTextures = (material, textureMap, part) => {
     // Voeg meer cases toe voor andere onderdelen indien nodig
   }
 };
-
-
 </script>
 
 <template>
@@ -313,7 +343,8 @@ const updateMaterialTextures = (material, textureMap, part) => {
       class="preloader fixed w-full h-full flex justify-center items-center flex-col bg-black text-white">
       <!-- Add your preloader animation or message here -->
       <img src="/images/logo.png" alt="" class="mt-10 mb-5">
-      <img src="/images/preloader.jpg" alt="Loading..." class="h-85 bg-gradient-to-b from-transparent to-black opacity-60 rounded-full"/>
+      <img src="/images/preloader.jpg" alt="Loading..."
+        class="h-85 bg-gradient-to-b from-transparent to-black opacity-60 rounded-full" />
       <p class="absolute bottom-20">RUNNING TO THE SHOE LAB...</p>
     </div>
     <div v-else>
@@ -328,25 +359,24 @@ const updateMaterialTextures = (material, textureMap, part) => {
         <!-- Color options -->
         <div class="flex justify-center gap-8 items-center flex-wrap">
           <div v-for="color in colors" :key="color.color" class="text-center">
-            <div :style="{ backgroundColor: color.hex }" @click="changeColor(color.hex, parts[currentPartIndex].name)"
+            <div :style="{ backgroundColor: color.hex }"
+              @click="changeColor(color.color, color.hex, parts[currentPartIndex].name)"
               class="w-[42px] h-[42px] rounded-full mx-auto cursor-pointer"></div>
             <h2 class="mt-2">{{ color.color }}</h2>
           </div>
         </div>
-
         <!-- Texture options -->
-<div class="flex justify-center gap-8 items-center flex-wrap">
-  <div v-for="texture in textures" :key="texture.name" class="text-center">
-    <div @click="changeTexture(texture.name, parts[currentPartIndex].name)" class="w-[42px] h-[42px] mx-auto cursor-pointer">
-      <!-- Display texture preview or icon here -->
-      <img :src="texture.preview" alt="Texture Preview" class="w-full h-full rounded-full">
-    </div>
-    <h2 class="mt-2">{{ texture.displayName }}</h2>
-  </div>
-</div>
-
-
-
+        <div class="flex justify-center gap-8 items-center flex-wrap">
+          <div v-for="texture in textures" :key="texture.name" class="text-center">
+            <div @click="changeTexture(texture.name, parts[currentPartIndex].name)"
+              class="w-[42px] h-[42px] mx-auto cursor-pointer">
+              <!-- Display texture preview or icon here -->
+              <img :src="texture.preview" alt="Texture Preview" class="w-full h-full rounded-full">
+            </div>
+            <h2 class="mt-2">{{ texture.displayName }}</h2>
+          </div>
+        </div>
+        <OrderButton :customizations="customizations" :socket="socket" />
       </div>
     </div>
   </div>
