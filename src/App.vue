@@ -192,7 +192,15 @@ const colors = [
   { color: 'lime', hex: '#00ff00' },
 ];
 
-const parts = ["inside", "outside_1", "outside_2", "outside_3", "laces", "sole_bottom", "sole_top"];
+const parts = [
+  { name: "inside", display: "Inside Lining" },
+  { name: "outside_1", display: "Frontstrays" },
+  { name: "outside_2", display: "Midstrays" },
+  { name: "outside_3", display: "Backstrays" },
+  { name: "laces", display: "Laces" },
+  { name: "sole_bottom", display: "Outsole" },
+  { name: "sole_top", display: "Midsole" }
+];
 
 const selectedColor = ref(colors[0]); // Initialize with the first color
 const currentPartIndex = ref(0); // Initialize with the first part index
@@ -204,6 +212,7 @@ const navigatePrev = () => {
 const navigateNext = () => {
   currentPartIndex.value = (currentPartIndex.value + 1) % parts.length;
 };
+
 
 const changeColor = (color, part) => {
   scene.traverse((child) => {
@@ -230,14 +239,14 @@ const changeColor = (color, part) => {
         <!-- Previous and Next buttons -->
         <div class="flex justify-center">
           <a href="#" @click="navigatePrev"><i class="fa-solid fa-arrow-left fa-xl relative top-3.5 right-5"></i></a>
-          <h1 class="text-center text-[2em] font-bold pb-7">{{ parts[currentPartIndex] }}</h1>
+          <h1 class="text-center text-[2em] font-bold pb-7">{{ parts[currentPartIndex].display }}</h1>
           <a href="#" @click="navigateNext"><i class="fa-solid fa-arrow-right fa-xl relative top-3.5 left-5"></i></a>
         </div>
 
         <!-- Color options -->
         <div class="flex justify-center gap-8 items-center flex-wrap">
           <div v-for="color in colors" :key="color.color" class="text-center">
-            <div :style="{ backgroundColor: color.hex }" @click="changeColor(color.hex, parts[currentPartIndex])"
+            <div :style="{ backgroundColor: color.hex }" @click="changeColor(color.hex, parts[currentPartIndex].name)"
               class="w-[42px] h-[42px] rounded-full mx-auto cursor-pointer"></div>
             <h2 class="mt-2">{{ color.color }}</h2>
           </div>
