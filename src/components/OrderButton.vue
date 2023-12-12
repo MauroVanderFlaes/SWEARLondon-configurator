@@ -20,13 +20,13 @@ const placeOrder = async () => {
             "outside_3_color": customizations.value.outside_3.color,
             "sole_bottom_color": customizations.value.sole_bottom.color,
             "sole_top_color": customizations.value.sole_top.color,
-            "laces_material": "leather",
-            "sole_bottom_material": "leather",
-            "sole_top_material": "rubber",
-            "inside_material": "rubber",
-            "outside_1_material": "leather",
-            "outside_2_material": "rubber",
-            "outside_3_material": "leather",
+            "laces_material": customizations.value.laces.material,
+            "inside_material": customizations.value.inside.material,
+            "outside_1_material": customizations.value.outside_1.material,
+            "outside_2_material": customizations.value.outside_2.material,
+            "outside_3_material": customizations.value.outside_3.material,
+            "sole_bottom_material": customizations.value.sole_bottom.material,
+            "sole_top_material": customizations.value.sole_top.material,
             "username": username,
             "user_mail": user_mail
         };
@@ -56,13 +56,13 @@ const placeOrder = async () => {
                 "outside_3_color": customizations.value.outside_3.color,
                 "sole_bottom_color": customizations.value.sole_bottom.color,
                 "sole_top_color": customizations.value.sole_top.color,
-                "laces_material": "leather",
-                "sole_bottom_material": "leather",
-                "sole_top_material": "rubber",
-                "inside_material": "rubber",
-                "outside_1_material": "leather",
-                "outside_2_material": "rubber",
-                "outside_3_material": "leather",
+                "laces_material": customizations.value.laces.material,
+                "inside_material": customizations.value.inside.material,
+                "outside_1_material": customizations.value.outside_1.material,
+                "outside_2_material": customizations.value.outside_2.material,
+                "outside_3_material": customizations.value.outside_3.material,
+                "sole_bottom_material": customizations.value.sole_bottom.material,
+                "sole_top_material": customizations.value.sole_top.material,
                 "username": username,
                 "user_mail": user_mail,
                 "status": "To be produced",
@@ -83,6 +83,7 @@ const placeOrder = async () => {
 
 <template>
     <div class="flex justify-center mt-7">
-        <a @click="placeOrder" href="#" class="absolute top-5 right-10  bg-[#69FF24] text-black px-[75px] py-2 rounded font-bold">Order</a>
+        <a @click="placeOrder" href="#"
+            class="absolute top-5 right-10  bg-[#69FF24] text-black px-[75px] py-2 rounded font-bold">Order</a>
     </div>
 </template>
