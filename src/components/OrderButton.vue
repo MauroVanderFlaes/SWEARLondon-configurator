@@ -10,6 +10,8 @@ const socket = ref(props.socket);
 let username = "John Doe";
 let user_mail = "example@outlook.com";
 
+const confirmation = ref("");
+
 const placeOrder = async () => {
     try {
         let order = {
@@ -43,7 +45,7 @@ const placeOrder = async () => {
             // Parse the response to get the order ID
             const responseData = await response.json();
             const orderId = responseData.data[0].id;
-            console.log("Order ID:", responseData);
+            confirmation.value = "Order is placed!"
 
             // Include the order ID in the WebSocket message
             const websocketMessage = {
@@ -70,10 +72,9 @@ const placeOrder = async () => {
 
             // Send the WebSocket message
             socket.value.send(JSON.stringify(websocketMessage));
-
-            console.log("Order placed successfully!");
         } else {
             console.error("Error placing order:", response);
+            confirmation = "Error placing order";
         }
     } catch (error) {
         console.error("Error placing order:", error);
@@ -84,6 +85,9 @@ const placeOrder = async () => {
 <template>
     <div class="flex justify-center mt-7">
         <a @click="placeOrder" href="#"
-            class="absolute top-5 right-10  bg-[#69FF24] text-black px-[75px] py-2 rounded font-bold">Order</a>
+            class="absolute top-5 right-10  bg-[#69FF24] text-black px-[75px] py-2 rounded font-bold">
+            Order
+        </a>
+        <div v-if="confirmation" class="text-blue-500 mb-4 text-normal font-bold absolute top-[70px] right-[38px]">{{ confirmation }}</div>
     </div>
 </template>
