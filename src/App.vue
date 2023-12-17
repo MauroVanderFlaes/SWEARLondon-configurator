@@ -30,6 +30,9 @@ const camera = new THREE.PerspectiveCamera(
   1000
 );
 
+camera.position.z = 2.5;
+camera.position.y = 0.5;
+
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
@@ -229,8 +232,7 @@ onMounted(() => {
   octagon.material.side = THREE.DoubleSide;
   scene.add(octagon);
 
-  camera.position.z = 2.5;
-  camera.position.y = 0.5;
+
 
   //add ambient
   const ambientLight = new THREE.AmbientLight(0xffffff, 10);
@@ -250,6 +252,8 @@ onMounted(() => {
     controls.update();
 
     renderer.render(scene, camera);
+
+    camera.lookAt(scene.position);
   }
 
   animate();
@@ -314,10 +318,42 @@ const currentPartIndex = ref(0); // Initialize with the first part index
 
 const navigatePrev = () => {
   currentPartIndex.value = (currentPartIndex.value - 1 + parts.length) % parts.length;
+  setCameraPosition();
 };
 
 const navigateNext = () => {
   currentPartIndex.value = (currentPartIndex.value + 1) % parts.length;
+  setCameraPosition();
+};
+
+const cameraPositions = [
+  { x: 0.2, y: 2, z: 0 },   
+  { x: 1, y: 0, z: 2 },
+  { x: -1, y: 0, z: 1 },
+  { x: -0.5, y: 0, z: 1.5 },
+  { x: 1, y: 1, z: 1 },
+  { x: -0.5, y: 0, z: 1.5 },
+  { x: -0.4, y: 0, z: 1.5 },
+  { x: 0, y: 0, z: 0 },   
+];
+
+const setCameraPosition = () => {
+  // Controleer of currentPartIndex binnen de juiste grenzen valt
+  if (currentPartIndex.value >= 0 && currentPartIndex.value < cameraPositions.length) {
+
+    // Stel de camerapositie in op basis van het geselecteerde onderdeel
+    const newPosition = cameraPositions[currentPartIndex.value];
+
+    camera.position.x = newPosition.x;
+    camera.position.y = newPosition.y;
+    camera.position.z = newPosition.z;
+
+    // Hier voeg je code toe om daadwerkelijk de camerapositie in je applicatie aan te passen
+    // Bijvoorbeeld: camera.setPosition(newPosition.x, newPosition.y, newPosition.z);
+    console.log(`Set camera position to x: ${newPosition.x}, y: ${newPosition.y}, z: ${newPosition.z}`);
+  } else {
+    console.error("Ongeldige waarde voor currentPartIndex");
+  }
 };
 
 const changeColor = (colorName, colorHex, part) => {
