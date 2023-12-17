@@ -10,6 +10,8 @@ const socket = ref(props.socket);
 let username = "John Doe";
 let user_mail = "example@outlook.com";
 
+const confirmation = ref("");
+
 const placeOrder = async () => {
     try {
         let order = {
@@ -20,13 +22,13 @@ const placeOrder = async () => {
             "outside_3_color": customizations.value.outside_3.color,
             "sole_bottom_color": customizations.value.sole_bottom.color,
             "sole_top_color": customizations.value.sole_top.color,
-            "laces_material": "leather",
-            "sole_bottom_material": "leather",
-            "sole_top_material": "rubber",
-            "inside_material": "rubber",
-            "outside_1_material": "leather",
-            "outside_2_material": "rubber",
-            "outside_3_material": "leather",
+            "laces_material": customizations.value.laces.material,
+            "inside_material": customizations.value.inside.material,
+            "outside_1_material": customizations.value.outside_1.material,
+            "outside_2_material": customizations.value.outside_2.material,
+            "outside_3_material": customizations.value.outside_3.material,
+            "sole_bottom_material": customizations.value.sole_bottom.material,
+            "sole_top_material": customizations.value.sole_top.material,
             "username": username,
             "user_mail": user_mail
         };
@@ -43,7 +45,7 @@ const placeOrder = async () => {
             // Parse the response to get the order ID
             const responseData = await response.json();
             const orderId = responseData.data[0].id;
-            console.log("Order ID:", responseData);
+            confirmation.value = "Order is placed!"
 
             // Include the order ID in the WebSocket message
             const websocketMessage = {
@@ -56,13 +58,13 @@ const placeOrder = async () => {
                 "outside_3_color": customizations.value.outside_3.color,
                 "sole_bottom_color": customizations.value.sole_bottom.color,
                 "sole_top_color": customizations.value.sole_top.color,
-                "laces_material": "leather",
-                "sole_bottom_material": "leather",
-                "sole_top_material": "rubber",
-                "inside_material": "rubber",
-                "outside_1_material": "leather",
-                "outside_2_material": "rubber",
-                "outside_3_material": "leather",
+                "laces_material": customizations.value.laces.material,
+                "inside_material": customizations.value.inside.material,
+                "outside_1_material": customizations.value.outside_1.material,
+                "outside_2_material": customizations.value.outside_2.material,
+                "outside_3_material": customizations.value.outside_3.material,
+                "sole_bottom_material": customizations.value.sole_bottom.material,
+                "sole_top_material": customizations.value.sole_top.material,
                 "username": username,
                 "user_mail": user_mail,
                 "status": "To be produced",
@@ -70,10 +72,9 @@ const placeOrder = async () => {
 
             // Send the WebSocket message
             socket.value.send(JSON.stringify(websocketMessage));
-
-            console.log("Order placed successfully!");
         } else {
             console.error("Error placing order:", response);
+            confirmation = "Error placing order";
         }
     } catch (error) {
         console.error("Error placing order:", error);
@@ -83,6 +84,10 @@ const placeOrder = async () => {
 
 <template>
     <div class="flex justify-center mt-7">
-        <a @click="placeOrder" href="#" class="bg-[#69FF47] text-white px-[75px] py-2 rounded font-bold">Order</a>
+        <a @click="placeOrder" href="#"
+            class="absolute top-5 right-10  bg-[#69FF24] text-black px-[75px] py-2 rounded font-bold">
+            Order
+        </a>
+        <div v-if="confirmation" class="text-blue-500 mb-4 text-normal font-bold absolute top-[70px] right-[38px]">{{ confirmation }}</div>
     </div>
 </template>

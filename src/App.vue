@@ -109,12 +109,12 @@ const state = reactive({
 
 const changeTexture = (texture, part) => {
   const texturePath = getTexturePath(texture);
-
-
+  
   scene.traverse((child) => {
     if (child.isMesh && child.name === part) {
       const textureMap = new THREE.TextureLoader().load(texturePath, (loadedTexture) => {
         updateMaterialTextures(child.material, loadedTexture, part);
+        customizations[part].material = texture;
       }); // Add the closing parenthesis and semicolon here
     }
   });
