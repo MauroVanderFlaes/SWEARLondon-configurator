@@ -140,7 +140,7 @@ const getTexturePath = (textureName) => {
 
 onMounted(() => {
   // connect websocket
-  socket = new WebSocket('ws://localhost:3000/primus');
+  socket = new WebSocket('wss://swearlondon.onrender.com/primus');
   // Initialize the renderer and add it to the DOM
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.querySelector("#app").appendChild(renderer.domElement);
