@@ -88,6 +88,7 @@ const placeOrder = async () => {
             class="absolute top-5 right-10  bg-[#69FF24] text-black px-[75px] py-2 rounded font-bold">
             Order
         </a>
-        <div v-if="confirmation" class="text-blue-500 mb-4 text-normal font-bold absolute top-[70px] right-[38px]">{{ confirmation }}</div>
+        <div v-if="confirmation" class="text-blue-500 mb-4 text-normal font-bold absolute top-[70px] right-[38px]">{{
+            confirmation }}</div>
     </div>
 </template>
