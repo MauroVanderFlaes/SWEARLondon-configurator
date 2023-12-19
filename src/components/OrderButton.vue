@@ -33,7 +33,7 @@ const placeOrder = async () => {
             "user_mail": user_mail
         };
 
-        const response = await fetch("http://localhost:3000/api/v1/shoes/", {
+        const response = await fetch("https://swearlondon.onrender.com/api/v1/shoes/", {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -88,6 +88,7 @@ const placeOrder = async () => {
             class="absolute top-5 right-10  bg-[#69FF24] text-black px-[75px] py-2 rounded font-bold">
             Order
         </a>
-        <div v-if="confirmation" class="text-blue-500 mb-4 text-normal font-bold absolute top-[70px] right-[38px]">{{ confirmation }}</div>
+        <div v-if="confirmation" class="text-blue-500 mb-4 text-normal font-bold absolute top-[70px] right-[38px]">{{
+            confirmation }}</div>
     </div>
 </template>

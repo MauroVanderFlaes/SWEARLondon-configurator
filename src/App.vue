@@ -109,7 +109,7 @@ const state = reactive({
 
 const changeTexture = (texture, part) => {
   const texturePath = getTexturePath(texture);
-  
+
   scene.traverse((child) => {
     if (child.isMesh && child.name === part) {
       const textureMap = new THREE.TextureLoader().load(texturePath, (loadedTexture) => {
@@ -140,7 +140,7 @@ const getTexturePath = (textureName) => {
 
 onMounted(() => {
   // connect websocket
-  socket = new WebSocket('ws://localhost:3000/primus');
+  socket = new WebSocket('wss://swearlondon.onrender.com/primus');
   // Initialize the renderer and add it to the DOM
   renderer.setSize(window.innerWidth, window.innerHeight);
   document.querySelector("#app").appendChild(renderer.domElement);
@@ -158,8 +158,6 @@ onMounted(() => {
     // Traverse the children of the loaded model
     shoe.traverse((child) => {
       if (child.isMesh) {
-        console.log(child.name);
-
         let partMaterial; // Declare a variable to hold the material for each part
 
         if (child.name == "inside") {
@@ -231,8 +229,6 @@ onMounted(() => {
   octagon.position.set(0, -3, 0);
   octagon.material.side = THREE.DoubleSide;
   scene.add(octagon);
-
-
 
   //add ambient
   const ambientLight = new THREE.AmbientLight(0xffffff, 10);
@@ -311,8 +307,6 @@ const customizations = {
   }
 };
 
-console.log(customizations.laces.color);
-
 const selectedColor = ref(colors[0]); // Initialize with the first color
 const currentPartIndex = ref(0); // Initialize with the first part index
 
@@ -327,14 +321,14 @@ const navigateNext = () => {
 };
 
 const cameraPositions = [
-  { x: 0.2, y: 2, z: 0 },   
+  { x: 0.2, y: 2, z: 0 },
   { x: 1, y: 0, z: 2 },
   { x: -1, y: 0, z: 1 },
   { x: -0.5, y: 0, z: 1.5 },
   { x: 1, y: 1, z: 1 },
   { x: -0.5, y: 0, z: 1.5 },
   { x: -0.4, y: 0, z: 1.5 },
-  { x: 0, y: 0, z: 0 },   
+  { x: 0, y: 0, z: 0 },
 ];
 
 const setCameraPosition = () => {
@@ -347,10 +341,6 @@ const setCameraPosition = () => {
     camera.position.x = newPosition.x;
     camera.position.y = newPosition.y;
     camera.position.z = newPosition.z;
-
-    // Hier voeg je code toe om daadwerkelijk de camerapositie in je applicatie aan te passen
-    // Bijvoorbeeld: camera.setPosition(newPosition.x, newPosition.y, newPosition.z);
-    console.log(`Set camera position to x: ${newPosition.x}, y: ${newPosition.y}, z: ${newPosition.z}`);
   } else {
     console.error("Ongeldige waarde voor currentPartIndex");
   }
@@ -425,7 +415,6 @@ const updateMaterialTextures = (material, textureMap, part) => {
           <h1 class="text-center text-[2em] font-bold pb-7">{{ parts[currentPartIndex].display }}</h1>
           <a href="#" @click="navigateNext"><i class="fa-solid fa-arrow-right fa-xl relative top-3.5 left-5"></i></a>
         </div>
-
         <!-- Color options -->
         <div class="flex justify-center gap-8 items-center flex-wrap">
           <div v-for="color in colors" :key="color.color" class="text-center">
@@ -436,17 +425,17 @@ const updateMaterialTextures = (material, textureMap, part) => {
           </div>
         </div>
         <!-- Texture options -->
-<div class="flex justify-center gap-8 items-center flex-wrap mt-5">
-  <div v-for="texture in textures" :key="texture.name" class="text-center">
-    <div @click="changeTexture(texture.name, parts[currentPartIndex].name)" class="w-[42px] h-[42px] mx-auto cursor-pointer">
-      <!-- Display texture preview or icon here -->
-      <img :src="texture.preview" alt="Texture Preview" class="w-full h-full rounded-full">
-    </div>
-    <h2 class="mt-2">{{ texture.displayName }}</h2>
-  </div>
-  <OrderButton :customizations="customizations" :socket="socket" />
-</div>
-
+        <div class="flex justify-center gap-8 items-center flex-wrap mt-5">
+          <div v-for="texture in textures" :key="texture.name" class="text-center">
+            <div @click="changeTexture(texture.name, parts[currentPartIndex].name)"
+              class="w-[42px] h-[42px] mx-auto cursor-pointer">
+              <!-- Display texture preview or icon here -->
+              <img :src="texture.preview" alt="Texture Preview" class="w-full h-full rounded-full">
+            </div>
+            <h2 class="mt-2">{{ texture.displayName }}</h2>
+          </div>
+          <OrderButton :customizations="customizations" :socket="socket" />
+        </div>
       </div>
     </div>
   </div>
