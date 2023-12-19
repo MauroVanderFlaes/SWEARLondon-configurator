@@ -173,7 +173,7 @@ onMounted(() => {
         }
         if (child.name == "outside_1" || child.name == "outside_2" || child.name == "outside_3") {
           partMaterial = new THREE.MeshStandardMaterial({
-            color: "#00ff00",
+            color: "#ffffff",
             map: colorMap,
             normalMap: normalMap,
             bumpMap: bumpMap,
@@ -182,7 +182,7 @@ onMounted(() => {
         }
         if (child.name == "laces") {
           partMaterial = new THREE.MeshStandardMaterial({
-            color: "#000000",
+            color: "#ffffff",
             map: colorMap,
             normalMap: normalMap,
             bumpMap: bumpMap,
